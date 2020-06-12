@@ -171,7 +171,7 @@ if __name__ == '__main__':
     sets.n_epochs = 50
     sets.fold_index = 1
 
-    sets.model_name = r'prue_3dconv'
+    sets.model_name = r'pure_3dconv'
     sets.save_folder = r'./TReNDs/{}/' \
                        r'models_{}_{}_{}_fold_{}'.format(sets.model_name, 'resnet',sets.model_depth,sets.resnet_shortcut,sets.fold_index)
 

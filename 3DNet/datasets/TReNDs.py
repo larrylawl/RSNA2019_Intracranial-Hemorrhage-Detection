@@ -22,11 +22,13 @@ from monai.transforms import \
 
 # Assuming current directory is 3DNet
 local_root = "./datasets/TReNDs_data"
-root = local_root
+kaggle_root = "../inputs/trends-assessment-prediction"
+root = kaggle_root
 
 # setting paths
 train = pd.read_csv('{}/train_scores.csv'.format(root)).sort_values(by='Id')
 loadings = pd.read_csv('{}/loading.csv'.format(root))
+fnc = pd.read_csv('{}/fnc.csv'.format(root))
 sample = pd.read_csv('{}/sample_submission.csv'.format(root))
 reveal = pd.read_csv('{}/reveal_ID_site2.csv'.format(root))
 ICN = pd.read_csv('{}/ICN_numbers.csv'.format(root))
@@ -74,6 +76,9 @@ class TReNDsDataset(Dataset):
 
         if self.mode=='train' or self.mode=='valid' or self.mode=='valid_tta':
             features = ('age', 'domain1_var1', 'domain1_var2', 'domain2_var1', 'domain2_var2')
+            # TODO: handle fnc
+            # TODO: handle dropna
+            # data = pd.merge(loadings, fnc, on='Id')
             data = pd.merge(loadings, train, on='Id').dropna()
             id_train = list(data.Id)
             fea_train = np.asarray(data.drop(list(features), axis=1).drop('Id', axis=1))
