@@ -16,14 +16,6 @@ from monai.transforms import \
     Rand3DElasticd, RandAffined, \
     Spacingd, Orientationd
 
-root = r'../../input/trends-assessment-prediction'
-
-train = pd.read_csv('{}/train_scores.csv'.format(root)).sort_values(by='Id')
-loadings = pd.read_csv('{}/loading.csv'.format(root))
-sample = pd.read_csv('{}/sample_submission.csv'.format(root))
-reveal = pd.read_csv('{}/reveal_ID_site2.csv'.format(root))
-ICN = pd.read_csv('{}/ICN_numbers.csv'.format(root))
-
 """
     Load and display a subject's spatial map
 """
@@ -62,7 +54,15 @@ def read_data_sample():
 
 class TReNDsDataset(Dataset):
 
-    def __init__(self, mode='train', fold_index = 0):
+    def __init__(self, sets, mode='train', fold_index = 0):
+        # setting paths
+        train = pd.read_csv('{}/train_scores.csv'.format(sets.data_root)).sort_values(by='Id')
+        loadings = pd.read_csv('{}/loading.csv'.format(sets.data_root))
+        sample = pd.read_csv('{}/sample_submission.csv'.format(sets.data_root))
+        reveal = pd.read_csv('{}/reveal_ID_site2.csv'.format(sets.data_root))
+        ICN = pd.read_csv('{}/ICN_numbers.csv'.format(sets.data_root))
+
+
         # print("Processing {} datas".format(len(self.img_list)))
         self.mode = mode
         self.fold_index = fold_index
@@ -79,7 +79,7 @@ class TReNDsDataset(Dataset):
                 id = id_train[i]
                 fea = fea_train[i]
                 lbl = lbl_train[i]
-                filename = os.path.join('{}/fMRI_train_npy/{}.npy'.format(root, id))
+                filename = os.path.join('{}/fMRI_train_npy/{}.npy'.format(sets.data_root, id))
                 self.all_samples.append([filename, fea, lbl, str(id)])
 
             fold = 0
@@ -103,7 +103,7 @@ class TReNDsDataset(Dataset):
                 print('valid num:', self.len)
 
         elif  self.mode=='test':
-            labels_df = pd.read_csv("{}/train_scores.csv".format(root))
+            labels_df = pd.read_csv("{}/train_scores.csv".format(sets.data_root))
             labels_df["is_train"] = True
 
             features = ('age', 'domain1_var1', 'domain1_var2', 'domain2_var1', 'domain2_var2')
@@ -119,7 +119,7 @@ class TReNDsDataset(Dataset):
                 fea = fea_test[i]
                 lbl = lbl_test[i]
 
-                filename = os.path.join('{}/fMRI_test_npy/{}.npy'.format(root, id))
+                filename = os.path.join('{}/fMRI_test_npy/{}.npy'.format(sets.data_root, id))
                 if os.path.exists(filename):
                     self.all_samples.append([id, filename, fea, lbl])
 
@@ -178,7 +178,7 @@ def run_check_datasets():
         tmp = dataset[m]
         print(m)
 
-def convert_mat2nii2npy():
+def convert_mat2nii2npy(sets):
 
     def get_data(filename):
         with h5py.File(filename, 'r') as f:
@@ -188,10 +188,10 @@ def convert_mat2nii2npy():
         subject_data = np.moveaxis(subject_data, [0, 1, 2, 3], [3, 2, 1, 0])
         return subject_data
 
-    # train_root = '{}/fMRI_train/'.format(root)
-    # train_npy_root = '{}/fMRI_train_npy/'.format(root)
-    train_root = '{}/fMRI_test/'.format(root)
-    train_npy_root = '{}/fMRI_test_npy/'.format(root)
+    # train_root = '{}/fMRI_train/'.format(sets.data_root)
+    # train_npy_root = '{}/fMRI_train_npy/'.format(sets.data_root)
+    train_root = '{}/fMRI_test/'.format(sets.data_root)
+    train_npy_root = '{}/fMRI_test_npy/'.format(sets.data_root)
     os.makedirs(train_npy_root, exist_ok=True)
 
     mats = os.listdir(train_root)
