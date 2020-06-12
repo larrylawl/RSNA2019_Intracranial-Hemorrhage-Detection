@@ -22,6 +22,7 @@ from monai.transforms import \
 
 local_root = "./datasets/TReNDs_data" # Assuming current directory is 3DNet
 kaggle_root = "../input/trends-assessment-prediction"
+kaggle_npy_root = "../input/trends-npy-files"
 kaggle_output_root = "./"
 root = kaggle_root
 
@@ -90,7 +91,7 @@ class TReNDsDataset(Dataset):
                 fea = fea_train[i]
                 lbl = lbl_train[i]
                 # need to convert fMRI_train.mat to .npy in order to append as an array
-                filename = os.path.join('{}/fMRI_train_npy/{}.npy'.format(root, id))
+                filename = os.path.join('{}/fMRI_train_npy/{}.npy'.format(kaggle_npy_root, id))
                 self.all_samples.append([filename, fea, lbl, str(id)])
 
             fold = 0
