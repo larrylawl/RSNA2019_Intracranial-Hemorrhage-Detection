@@ -9,7 +9,7 @@ def parse_opts():
     parser = argparse.ArgumentParser()
     parser.add_argument(
         '--data_root',
-        default='./toy_data/',
+        default='./toy_data/TReNDs_data',
         type=str,
         help='Root directory path of data')
     parser.add_argument(

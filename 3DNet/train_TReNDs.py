@@ -216,7 +216,7 @@ if __name__ == '__main__':
     else:
         sets.pin_memory = True
 
-    train_dataset = TReNDsDataset(sets=sets, mode='train', fold_index=sets.fold_index)
+    train_dataset = TReNDsDataset(mode='train', fold_index=sets.fold_index)
     train_loader = DataLoader(train_dataset, batch_size=sets.batch_size,
                              shuffle=True, num_workers=sets.num_workers,
                              pin_memory=sets.pin_memory,drop_last=True)
