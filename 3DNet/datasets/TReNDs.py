@@ -20,9 +20,9 @@ from monai.transforms import \
     Load and display a subject's spatial map
 """
 
-# Assuming current directory is 3DNet
-local_root = "./datasets/TReNDs_data"
+local_root = "./datasets/TReNDs_data" # Assuming current directory is 3DNet
 kaggle_root = "../input/trends-assessment-prediction"
+kaggle_output_root = "./"
 root = kaggle_root
 
 # setting paths
@@ -199,28 +199,38 @@ def convert_mat2nii2npy():
         subject_data = np.moveaxis(subject_data, [0, 1, 2, 3], [3, 2, 1, 0])
         return subject_data
 
-    train_root = '{}/fMRI_train/'.format(root)
-    train_npy_root = '{}/fMRI_train_npy/'.format(root)
-    # test_root = '{}/fMRI_test/'.format(root)
-    # test_npy_root = '{}/fMRI_test_npy/'.format(root)
-    os.makedirs(train_npy_root, exist_ok=True)
+    for t in ["train", "test"]:
+        t_root = '{}/fMRI_{}/'.format(root, t)
+        t_npy_root = '{}/fMRI_{}_npy/'.format(kaggle_output_root, t)
+        # t_npy_root = '{}/fMRI_{}_npy/'.format(kaggle_output_root, t)
 
-    mats = os.listdir(train_root)
-    mats = [mat for mat in mats if '.mat' in mat]
-    random.shuffle(mats)
+        # train_root = '{}/fMRI_train/'.format(root)
+        # train_npy_root = '{}/fMRI_train_npy/'.format(kaggle_output_root)
+        # test_root = '{}/fMRI_test/'.format(root)
+        # test_npy_root = '{}/fMRI_test_npy/'.format(kaggle_output_root)
 
-    for mat in tqdm(mats):
-        mat_path = os.path.join(train_root, mat)
-        if os.path.exists(mat_path):
-            print(mat_path)
+        # train_root = '{}/fMRI_train/'.format(root)
+        # train_npy_root = '{}/fMRI_train_npy/'.format(root)
+        # test_root = '{}/fMRI_test/'.format(root)
+        # test_npy_root = '{}/fMRI_test_npy/'.format(root)
+        os.makedirs(t_npy_root, exist_ok=True)
 
-        npy_path = os.path.join(train_npy_root, mat.replace('.mat','.npy'))
-        if os.path.exists(npy_path):
-            print(npy_path, 'exist')
-        else:
-            data = get_data(mat_path)
-            print(npy_path,data.shape)
-            np.save(npy_path,data.astype(np.float16))
+        mats = os.listdir(t_root)
+        mats = [mat for mat in mats if '.mat' in mat]
+        random.shuffle(mats)
+
+        for mat in tqdm(mats):
+            mat_path = os.path.join(t_root, mat)
+            if os.path.exists(mat_path):
+                print(mat_path)
+
+            npy_path = os.path.join(t_npy_root, mat.replace('.mat','.npy'))
+            if os.path.exists(npy_path):
+                print(npy_path, 'exist')
+            else:
+                data = get_data(mat_path)
+                print(npy_path,data.shape)
+                np.save(npy_path,data.astype(np.float16))
 
 if __name__ == '__main__':
     run_check_datasets()
