@@ -22,7 +22,7 @@ from monai.transforms import \
 
 # Assuming current directory is 3DNet
 local_root = "./datasets/TReNDs_data"
-kaggle_root = "../inputs/trends-assessment-prediction"
+kaggle_root = "../input/trends-assessment-prediction"
 root = kaggle_root
 
 # setting paths
